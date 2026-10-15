@@ -1,0 +1,15 @@
+{
+  "name": "anchor-scope-card",
+  "version": "1.0.0",
+  "description": "A4 yacht anchor scope / chain length / swing radius cockpit card generator (FairHelm Open-Source Seamanship Suite)",
+  "license": "MIT",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nareyko/anchor-scope-card.git"
+  },
+  "homepage": "https://nareyko.github.io/anchor-scope-card/",
+  "scripts": {
+    "test": "node --test scope-model.test.mjs"
+  }
+}

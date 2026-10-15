@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Anchor Scope / Chain Length Cockpit Card Generator — FairHelm</title>
+  <meta name="description" content="Free A4 yacht anchor scope card: compute rode length, horizontal reach, and swing diameter from depth, tide, bow height, and LOA. Print-ready for cockpit lamination. Sister to FairHelm courses and free-vhf.">
+  <link rel="canonical" id="canonical-link" href="https://nareyko.github.io/anchor-scope-card/">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700;800&family=Outfit:wght@400;500;600;700;800&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css?v=1">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "FairHelm Anchor Scope / Chain Length Cockpit Card Generator",
+    "applicationCategory": "NavigationApplication",
+    "operatingSystem": "All",
+    "url": "https://nareyko.github.io/anchor-scope-card/",
+    "description": "A4 yacht anchor scope, chain length, and swing radius cockpit card generator. Free client-side tool in the FairHelm Open-Source Seamanship Suite; pairs with FairHelm courses and the free-vhf radio simulator.",
+    "isBasedOn": "https://fairhelm.com/en/courses/",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "EUR"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "FairHelm",
+      "url": "https://fairhelm.com"
+    }
+  }
+  </script>
+</head>
+<body>
+  <header class="screen-only app-header">
+    <div class="header-main">
+      <div>
+        <p class="kicker" id="ui-kicker">SCOPE · RODE · SWING CIRCLE · A4</p>
+        <h1 id="ui-title">Anchor Scope / Chain Length Cockpit Card</h1>
+        <p class="lede" id="ui-lede">Enter depth, tide, bow height, and LOA. The card prints rode length, horizontal reach, and swing diameter for 3:1 / 5:1 / 7:1 — laminate and keep at the windlass.</p>
+      </div>
+      <div class="header-actions">
+        <label class="lang-picker" for="lang-select">
+          <span class="sr-only">Language</span>
+          <select id="lang-select" aria-label="Language">
+            <option value="en">EN · English</option>
+            <option value="de">DE · Deutsch</option>
+            <option value="sv">SV · Svenska</option>
+            <option value="ru">RU · Русский</option>
+            <option value="pl">PL · Polski</option>
+            <option value="es">ES · Español</option>
+            <option value="uk">UK · Українська</option>
+            <option value="ar">AR · العربية</option>
+            <option value="zh">ZH · 中文</option>
+            <option value="he">HE · עברית</option>
+          </select>
+        </label>
+        <button type="button" id="btn-night" class="btn-secondary" aria-pressed="false">Night Red Light</button>
+        <button type="button" id="btn-print" class="btn-primary">Print / Save A4 PDF for Lamination</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="workspace">
+    <aside class="screen-only editor-panel" aria-labelledby="ui-form-heading">
+      <div class="editor-card">
+        <div class="editor-card-header">
+          <h2 id="ui-form-heading">Anchorage &amp; Vessel Inputs</h2>
+          <p class="privacy-badge" id="ui-privacy">100% client-side: vessel data never leaves your browser.</p>
+        </div>
+
+        <div class="presets-bar">
+          <span class="presets-label" id="ui-presets-label">Quick Presets:</span>
+          <button type="button" class="chip" id="btn-nordic">Nordic 8 m</button>
+          <button type="button" class="chip" id="btn-med">Med 5 m</button>
+          <button type="button" class="chip" id="btn-storm">Storm 7:1</button>
+          <button type="button" class="chip" id="btn-blank">Blank</button>
+        </div>
+
+        <form id="card-form" autocomplete="off" novalidate>
+          <div class="field-grid">
+            <label class="field">
+              <span id="lbl-vessel">Vessel Name</span>
+              <input type="text" id="in-vessel" maxlength="36" placeholder="SY AURORA">
+            </label>
+
+            <label class="field">
+              <span id="lbl-waters">Home Waters / Cruising Area</span>
+              <input type="text" id="in-waters" maxlength="48" placeholder="Stockholm Archipelago">
+            </label>
+
+            <div class="field-row-2">
+              <label class="field">
+                <span id="lbl-depth">Charted Depth (at LW)</span>
+                <input type="number" id="in-depth" min="0" step="0.1" inputmode="decimal">
+              </label>
+              <label class="field">
+                <span id="lbl-tide">Expected Tide Rise</span>
+                <input type="number" id="in-tide" min="0" step="0.1" inputmode="decimal">
+              </label>
+            </div>
+
+            <div class="field-row-2">
+              <label class="field">
+                <span id="lbl-bow">Bow Roller Height Above Water</span>
+                <input type="number" id="in-bow" min="0" step="0.1" inputmode="decimal">
+              </label>
+              <label class="field">
+                <span id="lbl-loa">Length Overall (LOA)</span>
+                <input type="number" id="in-loa" min="0" step="0.1" inputmode="decimal">
+              </label>
+            </div>
+
+            <div class="field-row-2">
+              <label class="field">
+                <span id="lbl-scope">Scope Ratio (S:1)</span>
+                <select id="in-scope">
+                  <option value="3">3:1</option>
+                  <option value="5">5:1</option>
+                  <option value="7">7:1</option>
+                  <option value="custom">Custom</option>
+                </select>
+              </label>
+              <label class="field" id="custom-scope-wrap" hidden>
+                <span id="lbl-scope-custom">Custom S</span>
+                <input type="number" id="in-scope-custom" min="1.1" step="0.1" inputmode="decimal" value="4">
+              </label>
+            </div>
+
+            <div class="field-row-2">
+              <label class="field">
+                <span id="lbl-rode">Rode Type</span>
+                <select id="in-rode">
+                  <option value="all_chain" id="opt-rode-chain">All chain</option>
+                  <option value="chain_rope" id="opt-rode-rope">Chain + rope</option>
+                </select>
+              </label>
+              <label class="field">
+                <span id="lbl-unit">Units</span>
+                <select id="in-unit">
+                  <option value="m" id="opt-unit-m">Metres (m)</option>
+                  <option value="ft" id="opt-unit-ft">Feet (ft)</option>
+                </select>
+              </label>
+            </div>
+
+            <p class="field-hint" id="hint-scope-status"></p>
+          </div>
+
+          <div class="editor-footer-actions">
+            <button type="button" id="btn-print-bottom" class="btn-primary full-width">Print / Save A4 PDF for Lamination</button>
+            <div class="secondary-row">
+              <button type="button" id="btn-copy-link" class="btn-secondary">Copy Boat Link</button>
+              <div class="credit-links">
+                <a id="credit-courses" class="fairhelm-pill" href="https://fairhelm.com/en/courses/" target="_blank" rel="noopener">FairHelm Courses ↗</a>
+                <a id="credit-vhf" class="fairhelm-pill" href="https://fairhelm.com/en/free-vhf/" target="_blank" rel="noopener">Free VHF ↗</a>
+              </div>
+            </div>
+            <p id="copy-status" class="copy-status" role="status" aria-live="polite" hidden></p>
+          </div>
+        </form>
+      </div>
+    </aside>
+
+    <section class="sheet-stage" aria-label="A4 Print Preview">
+      <article class="a4-sheet" id="a4-sheet">
+        <div class="punch-marks" aria-hidden="true">
+          <span class="punch-hole"></span>
+          <span class="trim-caption" id="sheet-header-right">MOUNT AT WINDLASS · LAMINATE A4</span>
+          <span class="punch-hole"></span>
+        </div>
+
+        <header class="sheet-top-bar">
+          <div class="sheet-top-title" id="sheet-header-left">
+            ANCHOR SCOPE · RODE LENGTH · SWING CIRCLE
+          </div>
+          <div class="sheet-top-port" id="out-waters-badge">STOCKHOLM ARCHIPELAGO</div>
+        </header>
+
+        <section class="vessel-id-grid" aria-label="Vessel Identification">
+          <div class="id-cell">
+            <div class="id-label" id="lbl-id-vessel">VESSEL</div>
+            <div class="id-value-xl" id="out-vessel-name">SY AURORA</div>
+            <div class="id-sub" id="out-rode-kind">All chain</div>
+          </div>
+          <div class="id-cell">
+            <div class="id-label" id="lbl-id-waters">WATERS</div>
+            <div class="id-value-xl" id="out-waters">Stockholm Archipelago</div>
+            <div class="id-sub" id="out-d-line">D = depth + tide + bow</div>
+          </div>
+        </section>
+
+        <section class="big-numbers" aria-label="Scope Results">
+          <div class="big-card">
+            <div class="big-card-label" id="lbl-big-scope">SCOPE</div>
+            <div class="big-card-value mono" id="out-scope">5:1</div>
+            <div class="big-card-hint" id="out-d-value">D —</div>
+          </div>
+          <div class="big-card">
+            <div class="big-card-label" id="lbl-big-rode">RODE LENGTH</div>
+            <div class="big-card-value mono" id="out-rode">—</div>
+            <div class="big-card-hint">L = S × D</div>
+          </div>
+          <div class="big-card">
+            <div class="big-card-label" id="lbl-big-swing">SWING RADIUS</div>
+            <div class="big-card-value mono" id="out-swing">—</div>
+            <div class="big-card-hint">R = H + LOA</div>
+          </div>
+          <div class="big-card">
+            <div class="big-card-label" id="lbl-big-diameter">SWING DIAMETER</div>
+            <div class="big-card-value mono" id="out-diameter">—</div>
+            <div class="big-card-hint">2R</div>
+          </div>
+        </section>
+
+        <p class="invalid-note" id="out-invalid" hidden></p>
+
+        <section class="scope-table-wrap" aria-label="Scope comparison table">
+          <div class="scope-table-title" id="out-table-title">SCOPE COMPARISON (3:1 · 5:1 · 7:1)</div>
+          <table class="scope-table">
+            <thead>
+              <tr>
+                <th>S:1</th>
+                <th id="th-l">L</th>
+                <th id="th-h">H</th>
+                <th id="th-r">R</th>
+                <th id="th-dia">Ø</th>
+              </tr>
+            </thead>
+            <tbody id="scope-table-body"></tbody>
+          </table>
+        </section>
+
+        <section class="mid-grid">
+          <div class="check-box">
+            <div class="ref-title" id="out-checklist-title">BEFORE YOU DROP</div>
+            <ol class="check-list" id="out-checklist"></ol>
+          </div>
+          <div class="guide-box">
+            <div class="ref-title" id="out-guidance-title">SCOPE GUIDANCE (RULE OF THUMB)</div>
+            <p class="guide-body" id="out-guidance-body"></p>
+          </div>
+        </section>
+
+        <footer class="sheet-footer">
+          <div class="qr-block">
+            <div class="qr-svg-wrap" id="qr-container" aria-hidden="false"></div>
+            <div>
+              <div class="qr-title" id="out-qr-title">Learn Seamanship with FairHelm Courses</div>
+              <div class="qr-body" id="out-qr-body">Scan QR or visit fairhelm.com/en/courses/</div>
+            </div>
+          </div>
+          <div class="sheet-meta-right">
+            <a id="sheet-courses-link" href="https://fairhelm.com/en/courses/" target="_blank" rel="noopener">fairhelm.com/en/courses/</a>
+            <a id="sheet-vhf-link" href="https://fairhelm.com/en/free-vhf/" target="_blank" rel="noopener">fairhelm.com/en/free-vhf/</a>
+            <span class="sheet-standard" id="out-fairhelm-credit">© FairHelm · Open-Source Seamanship Suite</span>
+          </div>
+        </footer>
+      </article>
+    </section>
+  </main>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
